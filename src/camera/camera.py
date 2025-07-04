@@ -66,20 +66,22 @@ def find_coordinates(soup: BeautifulSoup) -> tuple[tuple[str | None, str | None]
     return ((None, None), (None, None))
 
 
-def save_camera_image(img_url: str, station_name: str):
+def retrieve_image(img_url: str) -> bytes | None:
+    """Retrieve the image from the given URL."""
     if not img_url:
-        return
+        return None
 
     headers = {"User-Agent": "Mozilla/5.0"}
     response = requests.get(img_url, headers=headers)
-    if (response.status_code != 200) or \
-            not 'image' in response.headers.get('Content-Type', ''):
+    if response.status_code == 200 and 'image' in response.headers.get('Content-Type', ''):
+        return response.content
+    else:
         logger.info(f"Url does not link to an image: '{img_url}'")
-        return
+        return None
 
-    img_data = response.content
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
-    img_filename = f"{station_name}_{timestamp}{Path(img_url).suffix}"
+
+def save_camera_image(img_data: bytes, img_filename: str):
+    """Save the camera image to a file."""
     with open(img_filename, 'wb') as f:
         f.write(img_data)
     logger.info(f"Image saved as {img_filename}")
@@ -107,9 +109,9 @@ def capture(url: str):
 
     for img_tag in img_tags:
         if 'src' in img_tag.attrs:
-            img_src = urljoin(url, img_tag['src'])
-            if 'upload' in img_src:
-                logger.info(f"Found image: {img_src}")
+            img_url = urljoin(url, img_tag['src'])
+            if 'upload' in img_url:
+                logger.info(f"Found image: {img_url}")
                 break
 
     # Step 3: Extract coordinates
@@ -120,7 +122,16 @@ def capture(url: str):
     else:
         logger.info("Coordinates not found.")
 
-    save_camera_image(img_src, station_name)
+    # Step 4: get the image
+    img_data = retrieve_image(img_url)
+    if img_data is None:
+        return
+
+    # Step 5: Determine the local name and save the image
+    # using the current system time, not the stamped time in the image
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+    img_filename = f"{station_name}_{timestamp}{Path(img_url).suffix}"
+    save_camera_image(img_data, img_filename)
 
 
 if __name__ == "__main__":
