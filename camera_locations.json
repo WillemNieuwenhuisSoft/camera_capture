@@ -1,0 +1,93 @@
+{
+	"camera_locations": [
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_wilsonE.html",
+            "name": "Wilson Airport East",
+			"title": "Wilson Airport East, Nairobi",
+			"location": [
+				-1.3176388888888889,
+				36.81355555555555
+			],
+			"description": "Camera faces Across RWY 07 towards JKIA / East.",
+			"start_time": "07:30:00",
+			"end_time": "17:30:00",
+			"interval": 60,
+			"interval_unit": "minutes",
+			"timezone": "EAT",
+			"timezone_title": "Africa/Nairobi",
+            "timestamp_position": "(0, 36)"
+		},
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_wilsonE.html",
+			"title": "Wilson Airport E"
+		},
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_wilsonSE.html",
+			"title": "Wilson Airport SE"
+		},
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_NairobiESE.html",
+			"title": "Nairobi ESE"
+		},
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_NairobiSSE.html",
+			"title": "Nairobi SSE"
+		},
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_SW_Access_Lane.html",
+			"title": "SW Access Lane"
+		},
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_NgongHillsW.html",
+			"title": "Ngong Hills W"
+		},
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_NgongHillsNW.html",
+			"title": "Ngong Hills NW"
+		},
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_NgongWSW.html",
+			"title": "Ngong Hills WSW"
+		},
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_OrlyAirparkNW.html",
+			"title": "Orly Airpark NW"
+		},
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_Corner_Baridi.html",
+			"title": "Corner Baridi"
+		},
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_machakosSE.html",
+			"title": "Machakos SE"
+		},
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_tatu_west.html",
+			"title": "Tatu City W"
+		},
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_tatu_north.html",
+			"title": "Tatu City N"
+		},
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_tatu_east.html",
+			"title": "Tatu City E"
+		},
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_tatu_south.html",
+			"title": "Tatu City S"
+		},
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_limuru_south.html",
+			"title": "Limuru S"
+		},
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_limuru_north.html",
+			"title": "Limuru N"
+		},
+		{
+			"url": "https://webcams.aeroclubea.com/Nairobi/nbo_thikaNE.html",
+			"title": "Thika E"
+		}
+	]
+}
