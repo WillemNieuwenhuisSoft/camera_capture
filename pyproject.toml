@@ -3,12 +3,15 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "camera_capture"
+name = "camera"
 version = "0.1.0"
 description = "A script to capture and process webcam data."
 authors = [{ name = "Willem Nieuwenhuis", email = "w.nieuwenhuis@utwente.nl" }]
-dependencies = ["requests", "beautifulsoup4", "pillow"]
+dependencies = ["requests", "beautifulsoup4", "pillow", "pandas"]
 requires-python = ">=3.7"
+
+[project.scripts]
+capture = "camera.capture:main"
 
 [project.optional-dependencies]
 test = ["pytest", "pytest-cov", "coverage"]
