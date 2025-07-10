@@ -1,11 +1,14 @@
 from datetime import datetime
+from html import unescape
 from pathlib import Path
 import logging
-import os
+import sys
 import re
 import requests
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
+from camera.camera_locations import load_camera_locations
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -41,29 +44,57 @@ def find_camera_description(soup: BeautifulSoup) -> str:
     return ''
 
 
-def dms_to_decimal(dms_str: str) -> float | None:
-    """Convert DMS (Degrees, Minutes, Seconds) to decimal format."""
-    match = re.match(r"(\d+)°(\d+)'([\d.]+)\"([NSEW])", dms_str)
-    if not match:
+def find_google_earth_link(soup: BeautifulSoup) -> str:
+    """
+    Find the Google Earth link in the HTML soup.
+    The link is expected to be in a <a> tag within a div with class 'mt-0 mb-1'.
+    The div tag contains the text "View on".
+    the <a> tag has the text "Google Earth".
+    <div class="mt-0 mb-1">View on <a href="https://earth.app.goo.gl/ncGPi9" target="_blank"><img src="../images/Logos/New-Google-Earth-logo.png" width="40" height="40" alt="">Google Earth </a></div>
+    """
+    # look for all <a> tags and extract the link when the text is "Google Earth"
+    a_tags = soup.find_all('a')
+    for a_tag in a_tags:
+        if a_tag.get_text(strip=True) == "Google Earth":
+            if a_tag.has_attr('href'):
+                return a_tag['href']
+
+    return ''
+
+
+def get_camera_coordinates(soup: BeautifulSoup) -> tuple[float, float] | None:
+    """
+    Get the camera coordinates from the current page.
+    Look for a google link; assume it is a google earth short link, such as
+    example: https://earth.app.goo.gl/g2XVph
+    Then expand the link to get the full URL, which contains the coordinates.
+
+    :param soup: webscraper object.
+    :return: coordinate tuple or None.
+    """
+
+    # first look for the google earth link
+    link = find_google_earth_link(soup)
+    if not link:
+        logger.warning("No Google Earth link found.")
         return None
-    degrees, minutes, seconds, direction = match.groups()
-    decimal = float(degrees) + float(minutes) / 60 + float(seconds) / 3600
-    if direction in "SW":
-        decimal = -decimal
-    return decimal
 
+    # expand the shortened URL to get the full URL
+    headers = {"User-Agent": "Mozilla/5.0"}
+    response = requests.head(link, allow_redirects=True, headers=headers)
 
-def find_coordinates(soup: BeautifulSoup) -> tuple[tuple[str | None, str | None], tuple[float | None, float | None]]:
-    coord_str = soup.find('h5', class_='mt-0 mb-2').find_next_sibling().text
-    regex = r"(\d+°\d+'\d+\.\d+\"[NS])\s+(\d+°\d+'\d+\.\d+\"[EW])"
-    coord = re.search(regex, coord_str)
-    if coord:
-        dms_lat, dms_lon = coord.groups()
-        # Convert to decimal format
-        decimal_lat = dms_to_decimal(dms_lat)
-        decimal_lon = dms_to_decimal(dms_lon)
-        return ((dms_lat, dms_lon), (decimal_lat, decimal_lon))
-    return ((None, None), (None, None))
+    # find the coordinates in the expanded URL
+    params = response.url.split('@')
+    parts = params[1].split(',')
+    if len(parts) >= 2:
+        lat = parts[0]
+        lon = parts[1]
+        logger.info(f"Coordinates (decimal): {lat=}, {lon=}")
+
+        return (lat, lon)
+
+    logger.warning("Unable to detect coordinates.")
+    return None
 
 
 def retrieve_image(img_url: str) -> bytes | None:
@@ -80,18 +111,18 @@ def retrieve_image(img_url: str) -> bytes | None:
         return None
 
 
-def save_camera_image(img_data: bytes, img_filename: str):
+def save_camera_image(img_data: bytes, img_filename: Path):
     """Save the camera image to a file."""
     with open(img_filename, 'wb') as f:
         f.write(img_data)
     logger.info(f"Image saved as {img_filename}")
 
 
-def capture(url: str):
+def capture(page_url: str):
     # Step 1: Load the page
-    response = requests.get(url)
+    response = requests.get(page_url)
     if response.status_code != 200:
-        logger.error(f"Unable to access {url}")
+        logger.error(f'Unable to access "{page_url}"')
         return
 
     # make sure to use the correct encoding
@@ -102,25 +133,23 @@ def capture(url: str):
     station_name = find_camera_title(soup)
     logger.info(f"Camera Name:, {station_name}")
     collect['name'] = station_name
-    collect['url'] = url
+    collect['url'] = page_url
 
-    # Step 2: Find all images and determine uploaded one
+    # Step 2: Find all images and determine latest uploaded one
     img_tags = soup.find_all('img')
 
+    img_url = None
     for img_tag in img_tags:
         if 'src' in img_tag.attrs:
-            img_url = urljoin(url, img_tag['src'])
-            if 'upload' in img_url:
+            img_url = urljoin(page_url, img_tag['src'])
+            if ('upload' in img_url) or ('stream' in img_url):
                 logger.info(f"Found image: {img_url}")
                 break
+    if img_url is None:
+        logger.info(f"No image found")
 
     # Step 3: Extract coordinates
-    lat_lon, dms = find_coordinates(soup)
-    if lat_lon[0]:
-        logger.info(f"Coordinates (DMS): {lat_lon}")
-        logger.info(f"Coordinates (Decimal): {dms}")
-    else:
-        logger.info("Coordinates not found.")
+    lat_lon = get_camera_coordinates(soup)
 
     # Step 4: get the image
     img_data = retrieve_image(img_url)
@@ -134,5 +163,19 @@ def capture(url: str):
     save_camera_image(img_data, img_filename)
 
 
+def main():
+    ds = load_camera_locations('camera_locations.txt')
+    if ds.empty:
+        logger.error("No camera locations found.")
+        sys.exit(1)
+
+    for index, row in ds.iterrows():
+        url = row['url']
+        location = row['location']
+        logger.info(f"Capturing image for {location} at {url}")
+        capture(url)
+        logger.info(f"Finished capturing image for {location} at {url}")
+
+
 if __name__ == "__main__":
-    capture(url="https://webcams.aeroclubea.com/Nairobi/nbo_wilsonE.html")
+    main()
