@@ -1,0 +1,19 @@
+url,location
+https://webcams.aeroclubea.com/Nairobi/nbo_wilsonE.html,Wilson Airport E
+https://webcams.aeroclubea.com/Nairobi/nbo_wilsonSE.html,Wilson Airport SE
+https://webcams.aeroclubea.com/Nairobi/nbo_NairobiESE.html,Nairobi ESE
+https://webcams.aeroclubea.com/Nairobi/nbo_NairobiSSE.html,Nairobi SSE
+https://webcams.aeroclubea.com/Nairobi/nbo_SW_Access_Lane.html,SW Access Lane  
+https://webcams.aeroclubea.com/Nairobi/nbo_NgongHillsW.html,Ngong Hills W  
+https://webcams.aeroclubea.com/Nairobi/nbo_NgongHillsNW.html,Ngong Hills NW
+https://webcams.aeroclubea.com/Nairobi/nbo_NgongWSW.html,Ngong Hills WSW
+https://webcams.aeroclubea.com/Nairobi/nbo_OrlyAirparkNW.html,Orly Airpark NW
+https://webcams.aeroclubea.com/Nairobi/nbo_Corner_Baridi.html,Corner Baridi
+https://webcams.aeroclubea.com/Nairobi/nbo_machakosSE.html,Machakos SE
+https://webcams.aeroclubea.com/Nairobi/nbo_tatu_west.html,Tatu City W
+https://webcams.aeroclubea.com/Nairobi/nbo_tatu_north.html,Tatu City N
+https://webcams.aeroclubea.com/Nairobi/nbo_tatu_east.html,Tatu City E
+https://webcams.aeroclubea.com/Nairobi/nbo_tatu_south.html,Tatu City S
+https://webcams.aeroclubea.com/Nairobi/nbo_limuru_south.html,Limuru S
+https://webcams.aeroclubea.com/Nairobi/nbo_limuru_north.html,Limuru N
+https://webcams.aeroclubea.com/Nairobi/nbo_thikaNE.html,Thika E
