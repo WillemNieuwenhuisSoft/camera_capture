@@ -23,7 +23,8 @@ def load_config() -> dict:
     The dict contains at least the location of the root folder to save all images to.
     """
     profile_dir = os.environ.get('USERPROFILE') or os.environ.get('HOME')
-    config_path = Path(profile_dir) / 'camera.config'
+    profile_dir = Path(profile_dir)
+    config_path = profile_dir / 'camera.config'
     if not config_path.exists():
         logger.warning(f"Config file '{config_path}' does not exist. Creating default config.")
         create_default_config(profile_dir, config_path)
