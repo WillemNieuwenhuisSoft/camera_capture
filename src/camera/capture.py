@@ -14,11 +14,11 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-def capture(page_url: str) -> bytes | None:
+def capture(page_url: str) -> tuple[bytes, str] | tuple[None, None]:
     response = requests.get(page_url)
     if response.status_code != 200:
         logger.error(f'Unable to access "{page_url}"')
-        return
+        return (None, None)
 
     # make sure to use the correct encoding
     response.encoding = response.apparent_encoding
