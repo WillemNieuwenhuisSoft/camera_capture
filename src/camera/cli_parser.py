@@ -52,8 +52,9 @@ def cli_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Camera Capture CLI")
     subparsers = parser.add_subparsers(dest='command', required=False)
 
-    # Run subcommand
-    run_parser = subparsers.add_parser('run', help='Capture images from cameras')
+    # Run subcommands
+    run_parser = subparsers.add_parser('run_repeat', help='Repeat capturing images from cameras at specified intervals')
+    runonce_parser = subparsers.add_parser('run', help='Capture images from cameras')
 
     # Config subcommand
     config_parser = subparsers.add_parser('config', help='Manage configuration settings')

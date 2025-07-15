@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import time
 import logging
 from pathlib import Path
 import requests
@@ -66,6 +66,19 @@ def main():
 
     if args.command == 'run':
         capture_all()
+    elif args.command == 'run_repeat':
+        logger.info("Running in repeat mode. Press Ctrl+C to stop.")
+        config = CameraConfig()
+        interval = config.interval * 60  # Convert minutes to seconds
+        try:
+            while True:
+                start = time.time()
+                capture_all()
+                elapsed = time.time() - start
+                to_sleep = max(0, interval - elapsed)
+                time.sleep(to_sleep)
+        except KeyboardInterrupt:
+            logger.info("Stopping repeat capture.")
     else:
         args.func(args)
 
