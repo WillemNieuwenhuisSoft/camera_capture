@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from datetime import datetime, time
 import json
 import logging
 from pathlib import Path
@@ -11,6 +12,17 @@ CONFIG_FILE = Path.home() / 'camera.config'
 @dataclass
 class CameraConfig:
     image_save_path: Path = field(default_factory=lambda: Path.home() / 'camera_images')
+    start: time = time(hour=6, minute=30)
+    end: time = time(hour=18, minute=30)
+    interval: int = 30  # in minutes
+
+    # Add a mapping for user-friendly descriptions
+    FIELD_DESCRIPTIONS = {
+        "image_save_path": "Root folder where captured images are stored",
+        "start": "Start time for capturing images (HH:MM)",
+        "end": "End time for capturing images (HH:MM)",
+        "interval": "Interval in minutes between captures (15 to 360 minutes)"
+    }
 
     def __post_init__(self):
         self.load()
@@ -33,11 +45,24 @@ class CameraConfig:
         with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
             config_data = json.load(f)
             self.image_save_path = Path(config_data.get('image_save_path'))
+            self.start = time.fromisoformat(config_data.get('start', '06:30'))
+            self.end = time.fromisoformat(config_data.get('end', '18:30'))
+            self.interval = config_data.get('interval', 30)
 
     def save(self):
         config_data = {
-            'image_save_path': str(self.image_save_path)
+            'image_save_path': str(self.image_save_path),
+            'start': self.start.strftime('%H:%M'),
+            'end': self.end.strftime('%H:%M'),
+            'interval': self.interval
         }
         with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
             json.dump(config_data, f, indent=4)
         logger.info(f"Configuration saved to '{CONFIG_FILE}'.")
+
+    def fields(self):
+        """Yield (field_name, value, description) for each config field."""
+        for field_name in self.__dataclass_fields__:
+            value = getattr(self, field_name)
+            desc = self.FIELD_DESCRIPTIONS.get(field_name, "")
+            yield field_name, value, desc
