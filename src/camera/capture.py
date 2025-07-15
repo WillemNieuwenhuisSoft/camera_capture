@@ -11,7 +11,6 @@ from camera.capture_functions import get_latest_image_url, retrieve_image, save_
 from camera.cli_parser import cli_parser
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def capture(page_url: str) -> tuple[bytes, str] | tuple[None, None]:
