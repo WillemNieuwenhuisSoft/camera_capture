@@ -2,13 +2,13 @@ from datetime import datetime
 import logging
 from pathlib import Path
 import requests
-from urllib.parse import urljoin
 import sys
 from bs4 import BeautifulSoup
 from camera.config import CameraConfig
 from camera.camera_locations import load_camera_locations
 from camera.capture_functions import find_camera_title, get_camera_coordinates
 from camera.capture_functions import get_latest_image_url, retrieve_image, save_camera_image
+from camera.cli_parser import cli_parser
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -39,7 +39,8 @@ def capture(page_url: str) -> tuple[bytes, str] | tuple[None, None]:
     return img_data, img_url
 
 
-def main():
+def capture_all():
+    """Capture images from all cameras listed in the camera locations file."""
     ds = load_camera_locations('camera_locations.txt')
     if ds.empty:
         logger.error("No camera locations found.")
@@ -55,6 +56,19 @@ def main():
         if img_data:
             save_camera_image(img_data, images_root, location, suffix=Path(img_url).suffix)
         logger.info(f"Finished capturing image for {location}")
+
+
+def main():
+    parser = cli_parser()
+    args = parser.parse_args()
+    if not args.command:
+        parser.print_help()
+        sys.exit(1)
+
+    if args.command == 'run':
+        capture_all()
+    else:
+        args.func(args)
 
 
 if __name__ == "__main__":
