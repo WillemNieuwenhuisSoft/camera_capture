@@ -5,7 +5,7 @@ import requests
 from urllib.parse import urljoin
 import sys
 from bs4 import BeautifulSoup
-from camera.config import load_config
+from camera.config import CameraConfig
 from camera.camera_locations import load_camera_locations
 from camera.capture_functions import find_camera_title, get_camera_coordinates
 from camera.capture_functions import get_latest_image_url, retrieve_image, save_camera_image
@@ -45,9 +45,8 @@ def main():
         logger.error("No camera locations found.")
         sys.exit(1)
 
-    config = load_config()
-    # images_root = Path(config.get('image_save_path', 'camera_images'))
-    images_root = Path('e:/temp/img_folder')
+    config = CameraConfig()
+    images_root = config.image_save_path
     for index, row in ds.iterrows():
         url = row['url']
         location = row['location']
