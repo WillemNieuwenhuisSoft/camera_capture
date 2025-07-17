@@ -1,8 +1,9 @@
-from datetime import time
+from datetime import datetime, timedelta
 import logging
 from pathlib import Path
 import requests
 import sys
+import time
 from bs4 import BeautifulSoup
 from camera.config import CameraConfig
 from camera.camera_locations import load_camera_locations
@@ -55,6 +56,32 @@ def capture_all():
         if img_data:
             save_camera_image(img_data, images_root, location, suffix=Path(img_url).suffix)
         logger.info(f"Finished capturing image for {location}")
+
+
+def delay_to_next_capture_time(config: CameraConfig) -> tuple[int, datetime]:
+    """ Determine the initial start time based on the current time and the configured start time.
+        Capture time is calculated at regular intervals since the start time.
+        Example: If the start time is 06:30, the interval is 30 minutes and the current time is 07:13,
+        the next capture will be at 07:30 (6:30 + 2 * 30).
+        Return the seconds to wait before actually starting the capture.
+    """
+    now = datetime.now()
+    dt_start = now.replace(hour=config.start.hour, minute=config.start.minute, second=0, microsecond=0)
+    if now.time() <= config.start:
+        return (dt_start - now).seconds, dt_start
+    if now.time() == config.end:
+        return 0, now
+    if now.time() > config.end:
+        target = dt_start + timedelta(days=1)
+        return (target - now).seconds, target
+    else:
+        # Otherwise, return the next interval after the current time
+        periods = (now - dt_start).seconds // (config.interval * 60)
+        remain = (now - dt_start).seconds % (config.interval * 60)
+        if remain > 0 and remain < config.interval * 60:
+            periods += 1
+        target = dt_start + timedelta(minutes=(periods) * config.interval)
+        return (target - now).seconds, target
 
 
 def main():
