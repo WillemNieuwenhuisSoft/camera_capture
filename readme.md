@@ -92,7 +92,8 @@ The app provides several commands and subcommands:
 
 ## Configuration File
 
-The configuration file (`camera.config`) is stored in your user profile folder (e.g., `C:\Users\<username>\camera.config`).  
+The configuration file (`camera.config`) is stored in your user profile folder (e.g., `C:\Users\<username>\camera.config`).
+When the app is first started the configuration file will be created if it does not yet exist.
 It is a JSON file with keys such as:
 
 ```json
