@@ -1,11 +1,8 @@
 from datetime import datetime, date
-from html import unescape
 import logging
 from pathlib import Path
 import requests
-from urllib.parse import urljoin
 from bs4 import BeautifulSoup
-from camera.camera_locations import load_camera_locations
 
 logger = logging.getLogger(__name__)
 
