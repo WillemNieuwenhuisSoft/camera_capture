@@ -11,6 +11,9 @@ from camera.capture_functions import find_camera_title, get_camera_coordinates
 from camera.capture_functions import get_latest_image_url, retrieve_image, save_camera_image
 from camera.cli_parser import cli_parser
 
+TODAY_CAPTURE = False
+NONSTOP_CAPTURE = True
+
 logger = logging.getLogger(__name__)
 
 
@@ -84,6 +87,21 @@ def delay_to_next_capture_time(config: CameraConfig) -> tuple[int, datetime]:
         return (target - now).seconds, target
 
 
+def capture_all_repeat(nonstop: bool = TODAY_CAPTURE):
+    config = CameraConfig()
+    try:
+        while True:
+            capture_all()
+            sleep_time, capture_time = delay_to_next_capture_time(config)
+            if (not nonstop) and capture_time.time() > config.end:
+                logger.info("Capture finished for today.")
+                break
+            logger.info(f'Next capture at {capture_time}; Press Ctrl+C to stop.')
+            time.sleep(sleep_time)
+    except KeyboardInterrupt:
+        logger.info("Stopping repeat capture.")
+
+
 def main():
     parser = cli_parser()
     args = parser.parse_args()
@@ -92,20 +110,14 @@ def main():
         sys.exit(1)
 
     if args.command == 'run':
+        logger.info("Capturing once.")
         capture_all()
     elif args.command == 'run_repeat':
-        logger.info("Running in repeat mode. Press Ctrl+C to stop.")
-        config = CameraConfig()
-        interval = config.interval * 60  # Convert minutes to seconds
-        try:
-            while True:
-                start = time.time()
-                capture_all()
-                elapsed = time.time() - start
-                to_sleep = max(0, interval - elapsed)
-                time.sleep(to_sleep)
-        except KeyboardInterrupt:
-            logger.info("Stopping repeat capture.")
+        logger.info("Capturing in one day repeat mode. Press Ctrl+C to stop.")
+        capture_all_repeat(TODAY_CAPTURE)
+    elif args.command == 'run_repeat_no_limit':
+        logger.info("Capturing in continuous repeat mode. Press Ctrl+C to stop.")
+        capture_all_repeat(NONSTOP_CAPTURE)
     else:
         args.func(args)
 
