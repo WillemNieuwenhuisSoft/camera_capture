@@ -93,7 +93,30 @@ def delay_to_next_capture_time(config: CameraConfig) -> tuple[int, datetime]:
         return (target - now).seconds, target
 
 
-def capture_all_repeat(nonstop: bool = TODAY_CAPTURE):
+def wait_until_next_capture(seconds: int):
+    """
+        Wait until the next capture time, allowing for keyboard interrupts.
+        Once per hour report remaining time.
+    """
+    period = 0
+    periods = seconds // 3600
+    while seconds > 0:
+        to_wait = min(seconds+1, 3600)
+        try:
+            st = time.time()
+            if periods > 1:
+                print(f"Sleeping for one hour (period {period + 1} of {periods})...")
+            time.sleep(to_wait - int(time.time() - st))
+        except KeyboardInterrupt:
+            print(f"Sleep interrupted at period {period + 1}.")
+            raise EndCaptureException("Capture interrupted by user.")
+        if periods > 1:
+            print(f"Completed sleep period {period + 1} of {periods}.")
+        seconds -= to_wait
+        period += 1
+
+
+def capture_all_repeat(capture_mode: int = CAPTURE_TODAY):
     config = CameraConfig()
     day_end = datetime.now().replace(hour=config.end.hour, minute=config.end.minute, second=0, microsecond=0)
     try:
@@ -104,7 +127,7 @@ def capture_all_repeat(nonstop: bool = TODAY_CAPTURE):
                 logger.info("Capture finished for today.")
                 break
             logger.info(f'Next capture at {capture_time}; Press Ctrl+C to stop.')
-            time.sleep(sleep_time)
+            wait_until_next_capture(sleep_time)
     except KeyboardInterrupt:
         logger.info("Stopping repeat capture.")
     except EndCaptureException:
