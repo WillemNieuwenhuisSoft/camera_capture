@@ -11,8 +11,14 @@ from camera.capture_functions import find_camera_title, get_camera_coordinates
 from camera.capture_functions import get_latest_image_url, retrieve_image, save_camera_image
 from camera.cli_parser import cli_parser
 
-TODAY_CAPTURE = False
-NONSTOP_CAPTURE = True
+CAPTURE_TODAY = 1
+NONSTOP_CAPTURE = 2
+
+
+class EndCaptureException(Exception):
+    """Exception to signal the user ended the capture process."""
+    pass
+
 
 logger = logging.getLogger(__name__)
 
@@ -89,16 +95,19 @@ def delay_to_next_capture_time(config: CameraConfig) -> tuple[int, datetime]:
 
 def capture_all_repeat(nonstop: bool = TODAY_CAPTURE):
     config = CameraConfig()
+    day_end = datetime.now().replace(hour=config.end.hour, minute=config.end.minute, second=0, microsecond=0)
     try:
         while True:
             capture_all()
             sleep_time, capture_time = delay_to_next_capture_time(config)
-            if (not nonstop) and capture_time.time() > config.end:
+            if (capture_mode == CAPTURE_TODAY) and capture_time > day_end:
                 logger.info("Capture finished for today.")
                 break
             logger.info(f'Next capture at {capture_time}; Press Ctrl+C to stop.')
             time.sleep(sleep_time)
     except KeyboardInterrupt:
+        logger.info("Stopping repeat capture.")
+    except EndCaptureException:
         logger.info("Stopping repeat capture.")
 
 
@@ -114,7 +123,7 @@ def main():
         capture_all()
     elif args.command == 'run_repeat':
         logger.info("Capturing in one day repeat mode. Press Ctrl+C to stop.")
-        capture_all_repeat(TODAY_CAPTURE)
+        capture_all_repeat(CAPTURE_TODAY)
     elif args.command == 'run_repeat_no_limit':
         logger.info("Capturing in continuous repeat mode. Press Ctrl+C to stop.")
         capture_all_repeat(NONSTOP_CAPTURE)
