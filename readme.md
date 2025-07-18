@@ -1,6 +1,6 @@
 # Camera Capture
 
-A Python application to periodically capture images from a set of webcams, saving them in a structured folder hierarchy. Configuration is managed via a simple CLI and a config file in your user profile.
+A Python application to periodically capture images from a set of webcams of the `Aero Club of east Africa`: Kenya webcams (https://webcams.aeroclubea.com/index.html), saving them in a structured folder hierarchy. The configuration is managed via a simple CLI and a config file in your user profile.
 
 ---
 
