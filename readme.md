@@ -170,8 +170,15 @@ Logs are written to `camera_capture.log` in the current directory.
 
 ## Troubleshooting
 
-- Ensure `camera_locations.txt` exists and has `url` and `location` columns.
 - Use `python -m camera config list` to check your configuration.
 - Use `python -m camera config update <key> <value>` to fix any settings.
+- Ensure `camera_locations.txt` exists and has `url` and `location` columns.
+
+Example camera_locations.txt file:
+
+```
+url,location
+https://webcams.aeroclubea.com/Nairobi/nbo_wilsonE.html,Wilson Airport E
+```
 
 ---
