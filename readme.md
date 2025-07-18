@@ -10,7 +10,7 @@ A Python application to periodically capture images from a set of webcams, savin
    The app uses a configuration file (`camera.config`) in your user profile directory to store settings such as the root folder for saving images, capture interval, and start/end times.
 
 2. **Camera Locations**  
-   Camera URLs and location names are loaded from a CSV file (`camera_locations.txt`). Each row should have a `url` and a `location` column. The user is free to add/remove locations at will.
+   Camera URLs and location names are loaded from a user provided CSV file (`camera_locations.txt`). Each row should have a `url` and a `location` column. The user is free to add/remove locations at will.
 
 3. **Image Capture**  
    For each camera, the app downloads the latest image and saves it in a folder structure:  
