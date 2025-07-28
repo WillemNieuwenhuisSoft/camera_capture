@@ -15,13 +15,15 @@ class CameraConfig:
     start: time = time(hour=6, minute=30)
     end: time = time(hour=18, minute=30)
     interval: int = 30  # in minutes
+    location_file: Path = field(default_factory=lambda: Path.home() / 'camera_locations.txt')
 
     # Add a mapping for user-friendly descriptions
     FIELD_DESCRIPTIONS = {
         "image_save_path": "Root folder where captured images are stored",
         "start": "Start time for capturing images (HH:MM)",
         "end": "End time for capturing images (HH:MM)",
-        "interval": "Interval in minutes between captures (15 to 360 minutes)"
+        "interval": "Interval in minutes between captures (15 to 360 minutes)",
+        "location_file": "File containing camera locations and URLs"
     }
 
     def __post_init__(self):
@@ -30,8 +32,10 @@ class CameraConfig:
     def _create_default_config(self):
         '''Create a default configuration file; assumes itdoes not exist.'''
         save_folder = Path.home() / 'camera_images'
+        location_file = Path.home() / 'camera_locations.txt'
         default_config = {
-            'image_save_path': str(save_folder)
+            'image_save_path': str(save_folder),
+            'location_file': str(location_file)
         }
         with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
             json.dump(default_config, f, indent=4)
@@ -45,6 +49,7 @@ class CameraConfig:
         with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
             config_data = json.load(f)
             self.image_save_path = Path(config_data.get('image_save_path'))
+            self.location_file = Path(config_data.get('locations_file'))
             self.start = time.fromisoformat(config_data.get('start', '06:30'))
             self.end = time.fromisoformat(config_data.get('end', '18:30'))
             self.interval = config_data.get('interval', 30)
@@ -54,14 +59,17 @@ class CameraConfig:
             'image_save_path': str(self.image_save_path),
             'start': self.start.strftime('%H:%M'),
             'end': self.end.strftime('%H:%M'),
-            'interval': self.interval
+            'interval': self.interval,
+            'locations_file': str(self.location_file)
         }
         with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
             json.dump(config_data, f, indent=4)
         logger.info(f"Configuration saved to '{CONFIG_FILE}'.")
 
     def fields(self):
-        """Yield (field_name, value, description) for each config field."""
+        """Yield (field_name, value, description) for each config field.
+           This is used to display configuration options in the CLI user interface.
+        """
         for field_name in self.__dataclass_fields__:
             value = getattr(self, field_name)
             desc = self.FIELD_DESCRIPTIONS.get(field_name, "")
