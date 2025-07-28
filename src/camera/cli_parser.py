@@ -50,6 +50,9 @@ def update_cli(args):
 
 def cli_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Camera Capture CLI")
+    parser.add_argument(
+        '-v', '--verbose', action='store_true', help='Enable verbose output'
+    )
     subparsers = parser.add_subparsers(dest='command', required=False)
 
     # Run subcommands

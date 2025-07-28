@@ -16,6 +16,7 @@ class CameraConfig:
     end: time = time(hour=18, minute=30)
     interval: int = 30  # in minutes
     location_file: Path = field(default_factory=lambda: Path.home() / 'camera_locations.txt')
+    verbose: bool = False  # Whether to print verbose output
 
     # Add a mapping for user-friendly descriptions
     FIELD_DESCRIPTIONS = {
