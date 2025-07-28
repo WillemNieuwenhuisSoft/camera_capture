@@ -24,7 +24,8 @@ class CameraConfig:
         "start": "Start time for capturing images (HH:MM)",
         "end": "End time for capturing images (HH:MM)",
         "interval": "Interval in minutes between captures (15 to 360 minutes)",
-        "location_file": "File containing camera locations and URLs"
+        "location_file": "Name of the file containing the names of camera locations and their URLs",
+        "verbose": "Enable verbose output for debugging and information"
     }
 
     def __post_init__(self):

@@ -10,7 +10,7 @@ A Python application to periodically capture images from a set of webcams of the
    The app uses a configuration file (`camera.config`) in your user profile directory to store settings such as the root folder for saving images, capture interval, and start/end times.
 
 2. **Camera Locations**  
-   Camera URLs and location names are loaded from a user provided CSV file (`camera_locations.txt`). Each row should have a `url` and a `location` column. The user is free to add/remove locations at will.
+   Camera URLs and location names are loaded from a user provided CSV file (default = `camera_locations.txt`). Each row should have a `url` and a `location` column. The user is free to add/remove locations at will.
 
 3. **Image Capture**  
    For each camera, the app downloads the latest image and saves it in a folder structure:  
@@ -82,7 +82,7 @@ The app provides several commands and subcommands:
   python -m camera config update end 19:00
   ```
 
-> [!info] "GitHub"
+> [!TIP]
 > When the app is installed with `pip install camera_capture`, `python -m camera` can be replaced with `capture`.
 >
 > For example:
@@ -94,14 +94,16 @@ The app provides several commands and subcommands:
 
 The configuration file (`camera.config`) is stored in your user profile folder (e.g., `C:\Users\<username>\camera.config`).
 When the app is first started the configuration file will be created if it does not yet exist.
-It is a JSON file with keys such as:
+The config file is stored in JSON format. Below is an example file with all currently accepted keys:
 
 ```json
 {
   "image_save_path": "D:/CameraImages",
   "start": "06:30",
   "end": "18:30",
-  "interval": 30
+  "interval": 30,
+  "locations_file":"camera_locations.txt",
+  "verbose":False
 }
 ```
 
@@ -111,6 +113,8 @@ Currently these keys are supported:
 - start: local time to start the capture (HH:MM)
 - end: local time to end the capture (HH:MM)
 - interval: time in minutes between captures.
+- locations_file: name of the file containing the names of camera locations and their URLs
+- verbose: enable verbose output for debugging and information
 
 You can use the CLI to update these values, or manually edit the file.
 
