@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "camera_capture"
-version = "1.0.1"
+version = "1.0.2"
 description = "An app to capture and process webcam data."
 authors = [{ name = "Willem Nieuwenhuis", email = "w.nieuwenhuis@utwente.nl" }]
 dependencies = ["requests", "beautifulsoup4", "pillow", "pandas"]
 requires-python = ">=3.7"
 readme = "readme.md"
-license-files = ["license.txt" ]
+license-files = ["license.txt"]
 
 [project.urls]
 source = "https://github.com/WillemNieuwenhuisSoft/camera_capture"
