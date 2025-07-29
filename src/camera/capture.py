@@ -95,7 +95,7 @@ def delay_to_next_capture_time(config: CameraConfig, now: datetime) -> tuple[int
         # Otherwise, return the next interval after the current time
         periods = (now - dt_start).seconds // (config.interval * 60)
         remain = (now - dt_start).seconds % (config.interval * 60)
-        if (remain > 0) and (remain < config.interval * 60):
+        if (remain >= 0) and (remain < config.interval * 60):
             # last period, may be less then the interval, so adjust
             periods += 1
         target = dt_start + timedelta(minutes=(periods) * config.interval)

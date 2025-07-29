@@ -13,14 +13,14 @@ from camera.config import CameraConfig
 @pytest.mark.parametrize("current_time, start_time, end_time, expected_wait", [
     pytest.param(datetime(2023, 10, 1, 6, 0), time_class(6, 30), time_class(hour=18, minute=30),
                  1800, id='before start'),  # same day, before start: 30 minutes wait
-    pytest.param(datetime(2023, 10, 1, 6, 30), time_class(6, 30), time_class(
-        hour=18, minute=30), 0, id='at start'),  # No wait: Exactly at start
+    pytest.param(datetime(2023, 10, 1, 6, 30), time_class(6, 30), time_class(hour=18, minute=30),
+                 0, id='at start'),  # No wait: Exactly at start
     pytest.param(datetime(2023, 10, 1, 7, 0), time_class(6, 30), time_class(hour=18, minute=30),
-                 0, id='past start'),  # No wait, past start time at integer interval
+                 1800, id='past start, integer interval'),  # No wait, past start time at integer interval
     pytest.param(datetime(2023, 10, 1, 8, 15), time_class(6, 30), time_class(hour=18, minute=30),
-                 900, id='non-integer interval'),  # 15 minute wait, non-integer interval
+                 900, id='past start, non-integer interval'),  # 15 minute wait, non-integer interval
     pytest.param(datetime(2023, 10, 1, 18, 0), time_class(6, 30), time_class(hour=18, minute=30),
-                 0, id='before end'),  # No wait, before end at integer interval
+                 1800, id='before end, integer interval'),  # No wait, before end at integer interval
     pytest.param(datetime(2023, 10, 1, 18, 30), time_class(6, 30), time_class(hour=18, minute=30),
                  0, id='at end'),  # No wait, exactly at end
     pytest.param(datetime(2023, 10, 1, 19, 0), time_class(6, 30), time_class(hour=18, minute=30),
