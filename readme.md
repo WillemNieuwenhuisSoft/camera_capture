@@ -113,7 +113,8 @@ Currently these keys are supported:
 - start: local time to start the capture (HH:MM)
 - end: local time to end the capture (HH:MM)
 - interval: time in minutes between captures.
-- locations_file: name of the file containing the names of camera locations and their URLs
+- locations_file: name of the file containing the names of camera locations and their URLs. The file
+  is expected in the current folder.
 - verbose: enable verbose output for debugging and information
 
 You can use the CLI to update these values, or manually edit the file.
