@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "camera_capture"
-version = "1.0.2"
+version = "1.0.3"
 description = "An app to capture and process webcam data."
 authors = [{ name = "Willem Nieuwenhuis", email = "w.nieuwenhuis@utwente.nl" }]
 dependencies = ["requests", "beautifulsoup4", "pillow", "pandas"]
