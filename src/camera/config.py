@@ -50,11 +50,17 @@ class CameraConfig:
 
         with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
             config_data = json.load(f)
-            self.image_save_path = Path(config_data.get('image_save_path'))
-            self.location_file = Path(config_data.get('locations_file'))
-            self.start = time.fromisoformat(config_data.get('start', '06:30'))
-            self.end = time.fromisoformat(config_data.get('end', '18:30'))
-            self.interval = config_data.get('interval', 30)
+            try:
+                self.image_save_path = Path(config_data.get('image_save_path'))
+                self.location_file = Path(config_data.get('locations_file'))
+                self.start = time.fromisoformat(config_data.get('start', '06:30'))
+                self.end = time.fromisoformat(config_data.get('end', '18:30'))
+                self.interval = config_data.get('interval', 30)
+                self.verbose = config_data.get('verbose', False)
+            except (ValueError, TypeError) as e:
+                logger.error(f"Error loading configuration: {e}. Using default values.")
+                # self._create_default_config()
+                # self.load()
 
     def save(self):
         config_data = {
@@ -62,7 +68,8 @@ class CameraConfig:
             'start': self.start.strftime('%H:%M'),
             'end': self.end.strftime('%H:%M'),
             'interval': self.interval,
-            'locations_file': str(self.location_file)
+            'locations_file': str(self.location_file),
+            'verbose': self.verbose
         }
         with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
             json.dump(config_data, f, indent=4)
