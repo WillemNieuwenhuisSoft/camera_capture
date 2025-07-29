@@ -122,8 +122,8 @@ def wait_until_next_capture(seconds: int, period_length: int = 3600, print_func=
         try:
             st = time()
             if period > 1:
-                print_func(f"""Sleeping for {period_length // 3600} hour(s)
-                        (period {periods - period + 1} of {periods})...""")
+                print_func((f"Sleeping for {period_length // 3600} hour(s)"
+                            f" (period {periods - period + 1} of {periods})..."))
             if period == 1:
                 print_func(f"Remaining sleep for period {periods}: {to_wait} seconds...")
             sleep(to_wait - int(time() - st))
