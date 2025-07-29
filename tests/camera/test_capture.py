@@ -106,7 +106,9 @@ def test_capture_time_and_wait_three_days(interval: int):
     pytest.param(90, id='90 minute interval'),
 ])
 def test_capture_repeat_one_day(interval: int):
-    """Test the capture_all_repeat function to ensure it captures at the correct intervals over three days."""
+    """Simulate the capture_all_repeat function to ensure it captures at the correct intervals over one day.
+       This test uses a mock time to simulate the current time and the capture process, to allow it to run quickly.
+    """
     config = CameraConfig()
     config.start = time_class(6, 30)
     config.end = time_class(10, 30)
