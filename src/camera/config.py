@@ -24,7 +24,7 @@ class CameraConfig:
         "start": "Start time for capturing images (HH:MM)",
         "end": "End time for capturing images (HH:MM)",
         "interval": "Interval in minutes between captures (15 to 360 minutes)",
-        "location_file": "Name of the file containing the names of camera locations and their URLs",
+        "locations_file": "Name of the file containing the names of camera locations and their URLs",
         "verbose": "Enable verbose output for debugging and information"
     }
 
@@ -37,7 +37,7 @@ class CameraConfig:
         location_file = Path.home() / 'camera_locations.txt'
         default_config = {
             'image_save_path': str(save_folder),
-            'location_file': str(location_file)
+            'locations_file': str(location_file)
         }
         with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
             json.dump(default_config, f, indent=4)
@@ -59,8 +59,6 @@ class CameraConfig:
                 self.verbose = config_data.get('verbose', False)
             except (ValueError, TypeError) as e:
                 logger.error(f"Error loading configuration: {e}. Using default values.")
-                # self._create_default_config()
-                # self.load()
 
     def save(self):
         config_data = {
