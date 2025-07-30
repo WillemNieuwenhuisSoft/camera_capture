@@ -18,6 +18,7 @@ def load_camera_locations(file_path: str) -> pd.DataFrame:
         df = pd.read_csv(file_path)
         if 'url' not in df.columns or 'location' not in df.columns:
             raise ValueError("Data file must contain 'url' and 'location' columns.")
+        df = df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
         return df
     except Exception as e:
         logger.error(f"Error loading camera locations: {e}")
