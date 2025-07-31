@@ -4,6 +4,30 @@ A Python application to periodically capture images from a set of webcams of the
 
 ---
 
+## Requirements
+
+- Python 3.7+
+- Depends on: `requests`, `pandas`, `beautifulsoup4`
+
+## Installing
+
+```
+pip install camera_capture
+```
+
+> [!CAUTION]
+>
+> When installing on Windows, preferable make sure Python is installed from https://python.org.
+> When Python is installed from the Microsoft Store, `pip install camera-capture` will install, but not fully adjust the `Path` environment variable. The installation issues a warning (the exact path is likely not the same, but it should look similar):
+>
+> WARNING: The script normalizer.exe is installed in `<userprofile\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\Scripts` which is not on `PATH`. Consider adding this directory to `PATH` or, if you prefer to suppress this warning, use --no-warn-script-location.
+> WARNING: The script capture.exe is installed in `<userprofile>\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\Scripts` which is not on `PATH`.
+> Consider adding this directory to `PATH` or, if you prefer to suppress this warning, use --no-warn-script-location.
+
+> To make full use of the `camera-capture` feature consider following this advice.
+
+---
+
 ## How the App Works
 
 1. **Configuration**  
@@ -38,6 +62,12 @@ The app provides several commands and subcommands:
   Capture images from all cameras once.
 
   ```
+  capture run
+  ```
+
+  Or, as fallback (see the caution above)
+
+  ```
   python -m camera run
   ```
 
@@ -45,11 +75,21 @@ The app provides several commands and subcommands:
   Repeat capturing images at the configured interval for the current day.
 
   ```
+  capture run_repeat
+  ```
+
+  Or
+
+  ```
   python -m camera run_repeat
   ```
 
 - **run_repeat_no_limit**  
   Repeat capturing images at the configured interval indefinitely.
+  ```
+  capture run_repeat_no_limit
+  ```
+  Or
   ```
   python -m camera run_repeat_no_limit
   ```
@@ -60,33 +100,27 @@ The app provides several commands and subcommands:
   List current configuration settings.
 
   ```
-  python -m camera config list
+  capture config list
   ```
 
 - **config update <key> <value>**  
   Update a configuration setting.  
   Example: change the image save path
   ```
-  python -m camera config update image_save_path D:/CameraImages
+  capture config update image_save_path D:/CameraImages
   ```
   Example: change the capture interval to 60 minutes
   ```
-  python -m camera config update interval 60
+  capture config update interval 60
   ```
   Example: change the start time to 07:00
   ```
-  python -m camera config update start 07:00
+  capture config update start 07:00
   ```
   Example: change the end time to 19:00
   ```
-  python -m camera config update end 19:00
+  capture config update end 19:00
   ```
-
-> [!TIP]
-> When the app is installed with `pip install camera_capture`, `python -m camera` can be replaced with `capture`.
->
-> For example:
-> `capture config list` instead of `python -m camera config list`
 
 ---
 
@@ -138,32 +172,19 @@ The timestamp is in local time.
 - Capture all cameras once:
 
   ```
-  python -m camera run
+  capture run
   ```
 
 - List configuration:
 
   ```
-  python -m camera config list
+  capture config list
   ```
 
 - Update interval:
   ```
-  python -m camera config update interval 60
+  capture config update interval 60
   ```
-
----
-
-## Requirements
-
-- Python 3.7+
-- Depends on: `requests`, `pandas`, `beautifulsoup4`
-
-## Installing
-
-```
-pip install camera_capture
-```
 
 ---
 
@@ -175,8 +196,8 @@ Logs are written to `camera_capture.log` in the current directory.
 
 ## Troubleshooting
 
-- Use `python -m camera config list` to check your configuration.
-- Use `python -m camera config update <key> <value>` to fix any settings.
+- Use `capture config list` to check your configuration.
+- Use `capture config update <key> <value>` to fix any settings.
 - Ensure `camera_locations.txt` exists and has `url` and `location` columns.
 
 Example camera_locations.txt file:
