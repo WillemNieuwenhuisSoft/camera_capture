@@ -5,7 +5,7 @@ import pytest
 from unittest.mock import patch
 
 from testfixtures import Replace, mock_time
-from camera.capture import delay_to_next_capture_time, wait_until_next_capture
+from camera.capture import determine_delay_to_next_capture_time, wait_until_next_capture
 from camera.capture import capture_all_repeat, NONSTOP_CAPTURE, CAPTURE_TODAY
 from camera.config import CameraConfig
 
@@ -37,7 +37,7 @@ def test_start_time_before_capture(current_time, start_time, end_time, expected_
     mock_now = current_time
     with patch("camera.capture.datetime") as mock_datetime:
         mock_datetime.now.return_value = mock_now
-        to_wait, _ = delay_to_next_capture_time(config, mock_now)
+        to_wait, _ = determine_delay_to_next_capture_time(config, mock_now)
     assert to_wait == expected_wait, f"Expected wait time {expected_wait} seconds, got {to_wait} seconds"
 
 
@@ -50,7 +50,7 @@ def test_next_capture_and_wait():
     wait_period_length = 3600
     time_tuple = (2023, 10, 1, 7, 0, 0)
     now = datetime(*time_tuple)
-    sleep_time, capture_time = delay_to_next_capture_time(config, now)
+    sleep_time, capture_time = determine_delay_to_next_capture_time(config, now)
 
     assert sleep_time == 1800, "Expected to wait for 30 minutes (1800 seconds)"
     assert capture_time == datetime(2023, 10, 1, 7, 30), "Expected next capture time to be at 07:30"
@@ -91,7 +91,7 @@ def test_capture_time_and_wait_three_days(interval: int):
             mock_datetime.now.return_value = current_time
 
             with patch("camera.capture.sleep") as mock_sleep:
-                sleep_time, capture_time = delay_to_next_capture_time(config, current_time)
+                sleep_time, capture_time = determine_delay_to_next_capture_time(config, current_time)
                 print(f"Next capture time: {capture_time}, Sleep time: {sleep_time}")
                 wait_until_next_capture(sleep_time, wait_period_length)
                 mock_sleep.assert_called()

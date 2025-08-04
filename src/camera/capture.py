@@ -76,7 +76,7 @@ def capture_all(all_urls: pd.DataFrame, config: CameraConfig) -> None:
         logger.info(f"Finished capturing image for {location}")
 
 
-def delay_to_next_capture_time(config: CameraConfig, now: datetime) -> tuple[int, datetime]:
+def determine_delay_to_next_capture_time(config: CameraConfig, now: datetime) -> tuple[int, datetime]:
     """ Determine the initial start time based on the current time and the configured start time.
         Capture time is calculated at regular intervals since the start time.
         Example: If the start time is 06:30, the interval is 30 minutes and the current time is 07:13,
@@ -102,49 +102,83 @@ def delay_to_next_capture_time(config: CameraConfig, now: datetime) -> tuple[int
         return (target - now).seconds, target
 
 
+def format_seconds_to_hours_minutes(seconds_to_wait: int) -> str:
+    """
+    Convert a number of seconds to a string in 'X hour(s) Y minute(s)' format.
+    """
+    hours = seconds_to_wait // 3600
+    minutes = (seconds_to_wait % 3600) // 60
+    seconds = seconds_to_wait % 60
+    parts = []
+    if hours > 0:
+        parts.append(f"{hours} hour{'s' if hours != 1 else ''}")
+    if minutes > 0:
+        parts.append(f"{minutes} minute{'s' if minutes != 1 else ''}")
+    if seconds > 0 or (hours == 0 and minutes == 0):
+        parts.append(f"{seconds} second{'s' if seconds != 1 else ''}")
+    return ', '.join(parts)
+
+
+def print_sleep_message(seconds: int, periods: int, period: int, print_func=print) -> None:
+    """
+    Print a message indicating how long the program will sleep.
+    """
+    wait_time_msg = format_seconds_to_hours_minutes(seconds)
+    msg = [f"Sleeping for {wait_time_msg}"]
+    if periods > 1:
+        msg.append(f"(period {period} of {periods})...")
+    print_func(" ".join(msg))
+
+
 def wait_until_next_capture(seconds: int, period_length: int = 3600, print_func=print) -> None:
     """
         Wait until the next capture time, allowing for keyboard interrupts.
         Once per {period_length} report remaining time.
+        Note that to get accurate timing, the period length should be short (fe. 1 or 10 minutes).
+        The time.sleep() function can experience quite some drift.
 
         Parameters:
         - seconds: The total number of seconds to wait.
-        - period_length: The length of each reporting period in seconds.
+        - period_length: The length of each reporting period in seconds (minimum 1 minute).
+        - print_func: Function to use for printing messages (default is print), use None to disable printing.
 
         Raises:
         - EndCaptureException: If the wait is interrupted by the user.
 
     """
-    periods = (seconds // period_length) + 1
-    period = periods
-    while seconds > 0:
-        to_wait = min(seconds, period_length)
+    # reduce the period_length by 10% to account for drift
+    period_length = max(60, int(period_length * 0.9))
+    periods = (seconds // period_length)
+    period = 1
+    current_time = time()
+    end_time = current_time + seconds
+    while end_time > current_time:
+        seconds_to_wait = min(seconds, period_length)
         try:
-            st = time()
-            if period > 1:
-                print_func((f"Sleeping for {period_length // 3600} hour(s)"
-                            f" (period {periods - period + 1} of {periods})..."))
-            if period == 1:
-                print_func(f"Remaining sleep for period {periods}: {to_wait} seconds...")
-            sleep(to_wait - int(time() - st))
+            print_sleep_message(seconds_to_wait, periods, period, print_func)
+            sleep(seconds_to_wait)
         except KeyboardInterrupt:
-            print_func(f"Sleep interrupted at period {periods - period + 1}.")
+            print_func(f"Sleep interrupted at period {period}.")
             raise EndCaptureException("Capture interrupted by user.")
         if periods > 1:
-            print_func(f"Completed sleep period {periods - period + 1} of {periods}.")
-        seconds -= to_wait
-        period -= 1
+            print_func(f"Completed sleep period {period} of {periods}.")
+
+        # synchronize with actual time, make sure not to overshoot the end time
+        current_time = time()
+        seconds = max(end_time - current_time, 0)
+        if seconds > 1:
+            period += 1
 
 
 def capture_all_repeat(all_urls: pd.DataFrame, config: CameraConfig, capture_mode: int = CAPTURE_TODAY) -> bool:
     now = datetime.now()
-    wait_period_length = 3600
+    wait_period_length = 600    # 10 minutes, to allow for periodic updates
     day_end = now.replace(hour=config.end.hour, minute=config.end.minute, second=0, microsecond=0)
     success = False
     try:
         while True:
             capture_all(all_urls, config)
-            sleep_time, capture_time = delay_to_next_capture_time(config, now)
+            sleep_time, capture_time = determine_delay_to_next_capture_time(config, now)
             if (capture_mode == CAPTURE_TODAY) and capture_time > day_end:
                 logger.info("Capture finished for today.")
                 success = True
