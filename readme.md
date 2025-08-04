@@ -12,7 +12,7 @@ A Python application to periodically capture images from a set of webcams of the
 ## Installing
 
 ```
-pip install camera_capture
+pip install camera-capture
 ```
 
 > [!CAUTION]
@@ -23,7 +23,7 @@ pip install camera_capture
 > WARNING: The script normalizer.exe is installed in `<userprofile\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\Scripts` which is not on `PATH`. Consider adding this directory to `PATH` or, if you prefer to suppress this warning, use --no-warn-script-location.
 > WARNING: The script capture.exe is installed in `<userprofile>\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\Scripts` which is not on `PATH`.
 > Consider adding this directory to `PATH` or, if you prefer to suppress this warning, use --no-warn-script-location.
-
+>
 > To make full use of the `camera-capture` feature consider following this advice.
 
 ---
