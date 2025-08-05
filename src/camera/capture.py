@@ -119,17 +119,6 @@ def format_seconds_to_hours_minutes(seconds_to_wait: int) -> str:
     return ', '.join(parts)
 
 
-def print_sleep_message(seconds: int, periods: int, period: int, print_func=print) -> None:
-    """
-    Print a message indicating how long the program will sleep.
-    """
-    wait_time_msg = format_seconds_to_hours_minutes(seconds)
-    msg = [f"Sleeping for {wait_time_msg}"]
-    if periods > 1:
-        msg.append(f"(period {period} of {periods})...")
-    print_func(" ".join(msg))
-
-
 def wait_until_next_capture(seconds: int, period_length: int = 3600, print_func=print) -> None:
     """
         Wait until the next capture time, allowing for keyboard interrupts.
@@ -148,26 +137,21 @@ def wait_until_next_capture(seconds: int, period_length: int = 3600, print_func=
     """
     # reduce the period_length by 10% to account for drift
     period_length = max(60, int(period_length * 0.9))
-    periods = (seconds // period_length)
-    period = 1
     current_time = time()
     end_time = current_time + seconds
     while end_time > current_time:
         seconds_to_wait = min(seconds, period_length)
         try:
-            print_sleep_message(seconds_to_wait, periods, period, print_func)
+            to_go = format_seconds_to_hours_minutes(seconds)
+            print_func(f'Sleep another {seconds_to_wait} seconds, (still {to_go} to go)')
             sleep(seconds_to_wait)
         except KeyboardInterrupt:
-            print_func(f"Sleep interrupted at period {period}.")
+            print_func(f"Sleep interrupted at {datetime.now()}.")
             raise EndCaptureException("Capture interrupted by user.")
-        if periods > 1:
-            print_func(f"Completed sleep period {period} of {periods}.")
 
         # synchronize with actual time, make sure not to overshoot the end time
         current_time = time()
         seconds = max(end_time - current_time, 0)
-        if seconds > 1:
-            period += 1
 
 
 def capture_all_repeat(all_urls: pd.DataFrame, config: CameraConfig, capture_mode: int = CAPTURE_TODAY) -> bool:
