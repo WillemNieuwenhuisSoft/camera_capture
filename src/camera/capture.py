@@ -143,7 +143,7 @@ def wait_until_next_capture(seconds: int, period_length: int = 3600, print_func=
         seconds_to_wait = min(seconds, period_length)
         try:
             to_go = format_seconds_to_hours_minutes(seconds)
-            print_func(f'Sleep another {seconds_to_wait} seconds, (still {to_go} to go)')
+            print_func(f'Sleep another {seconds_to_wait:.1f} seconds, (still {to_go} to go)')
             sleep(seconds_to_wait)
         except KeyboardInterrupt:
             print_func(f"Sleep interrupted at {datetime.now()}.")
