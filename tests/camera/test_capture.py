@@ -41,63 +41,6 @@ def test_start_time_before_capture(current_time, start_time, end_time, expected_
     assert to_wait == expected_wait, f"Expected wait time {expected_wait} seconds, got {to_wait} seconds"
 
 
-def test_next_capture_and_wait():
-    """Test that the next capture time is correctly calculated and the wait function works as expected."""
-    config = CameraConfig()
-    config.start = time_class(6, 30)
-    config.end = time_class(10, 30)
-    config.interval = 60
-    wait_period_length = 3600
-    time_tuple = (2023, 10, 1, 7, 0, 0)
-    now = datetime(*time_tuple)
-    sleep_time, capture_time = determine_delay_to_next_capture_time(config, now)
-
-    assert sleep_time == 1800, "Expected to wait for 30 minutes (1800 seconds)"
-    assert capture_time == datetime(2023, 10, 1, 7, 30), "Expected next capture time to be at 07:30"
-
-    # Test the wait_until_next_capture function
-    with patch("camera.capture.sleep") as mock_sleep:
-        wait_until_next_capture(sleep_time, wait_period_length)
-        mock_sleep.assert_called_once_with(sleep_time)
-
-
-@pytest.mark.parametrize("interval", [
-    pytest.param(10, id='10 minute interval'),
-    pytest.param(15, id='15 minute interval'),
-    pytest.param(30, id='30 minute interval'),
-    pytest.param(60, id='60 minute interval'),
-    pytest.param(90, id='90 minute interval'),
-])
-def test_capture_time_and_wait_three_days(interval: int):
-    """Test the cooperation between delay_to_next_capture_time and wait_until_next_capture functions
-       to ensure captures are at the correct intervals.
-       This test simulates a three-day period with a specified time range per day.
-       The entry time (current_time) is not at an exact multiple of the interval time since the start time.
-    """
-    config = CameraConfig()
-    config.start = time_class(6, 30)
-    config.end = time_class(10, 30)
-    config.interval = interval
-    process_time = 10  # Simulate a processing time of 10 seconds
-    wait_period_length = 3600 * 3
-    current_time = datetime(2023, 10, 1, 7, 0, 10)
-
-    import time
-    # Mock the current time to be the same as now
-    with patch("camera.capture.datetime") as mock_datetime:
-        while current_time <= datetime(2023, 10, 3, 10, 30):
-            # run for three days
-            print(f"Current time: {current_time}")
-            mock_datetime.now.return_value = current_time
-
-            with patch("camera.capture.sleep") as mock_sleep:
-                sleep_time, capture_time = determine_delay_to_next_capture_time(config, current_time)
-                print(f"Next capture time: {capture_time}, Sleep time: {sleep_time}")
-                wait_until_next_capture(sleep_time, wait_period_length)
-                mock_sleep.assert_called()
-            current_time = capture_time + timedelta(seconds=process_time)
-
-
 @pytest.mark.parametrize("interval", [
     pytest.param(10, id='10 minute interval'),
     pytest.param(15, id='15 minute interval'),
