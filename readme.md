@@ -56,6 +56,12 @@ The app provides several commands and subcommands:
   capture run-repeat-no-limit
   ```
 
+> [!NOTE]
+>
+> Instead of using the `run-repeat` commands an alternative way is using the scheduler (Windows) or setting up cron jobs (Linux), and only use the `capture run` command.
+>
+> There is an ovious downside of running the capture app using the `run-repeat` commands in a terminal: when the terminal it is running on is closed the image capture will stop.
+
 ### Config Subcommands
 
 - **config list**  
