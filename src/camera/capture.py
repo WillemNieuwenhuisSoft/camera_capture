@@ -28,6 +28,8 @@ def capture_all(all_urls: pd.DataFrame, config: CameraConfig) -> None:
         img_data, img_url = capture(url)
         if img_data:
             save_camera_image(img_data, images_root, location, suffix=Path(img_url).suffix)
+        else:
+            logger.error(f"No valid image data was captured for {location} at {url}")
         logger.info(f"Finished capturing image for {location}")
 
 
