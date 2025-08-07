@@ -7,7 +7,7 @@ name = "camera_capture"
 version = "1.0.5"
 description = "An app to capture and process webcam data."
 authors = [{ name = "Willem Nieuwenhuis", email = "w.nieuwenhuis@utwente.nl" }]
-dependencies = ["requests", "beautifulsoup4", "pillow", "pandas"]
+dependencies = ["requests", "beautifulsoup4", "pandas"]
 requires-python = ">=3.7"
 readme = "readme.md"
 license-files = ["license.txt"]
