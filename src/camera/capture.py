@@ -49,20 +49,6 @@ def capture(page_url: str) -> tuple[bytes, str] | tuple[None, None]:
     return img_data, img_url
 
 
-def load_urls_from_file(config: CameraConfig) -> pd.DataFrame:
-    """Load camera URLs from the camera locations file."""
-    camera_locations_file = config.location_file
-    if not camera_locations_file.exists():
-        logger.error(f"Camera locations file does not exist: {camera_locations_file}")
-        ds = pd.DataFrame(columns=["url", "location"])
-    else:
-        ds = load_camera_locations(camera_locations_file)
-        if ds.empty:
-            logger.error("No camera locations found.")
-
-    return ds
-
-
 def capture_all(all_urls: pd.DataFrame, config: CameraConfig) -> None:
     """Capture images from all cameras in the camera locations file."""
     images_root = config.image_save_path
