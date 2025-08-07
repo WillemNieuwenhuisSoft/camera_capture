@@ -58,9 +58,9 @@ def cli_parser() -> argparse.ArgumentParser:
     # Run subcommands
     runonce_parser = subparsers.add_parser('run', help='Capture images from cameras')
     repeat_parser = subparsers.add_parser(
-        'run_repeat_no_limit', help='Repeat capturing images from cameras at specified intervals indefinitely')
+        'run-repeat-no-limit', help='Repeat capturing images from cameras at specified intervals indefinitely')
     repeat_day_parser = subparsers.add_parser(
-        'run_repeat', help='Repeat capturing images from cameras at specified intervals for the current day')
+        'run-repeat', help='Repeat capturing images from cameras at specified intervals for the current day')
 
     # Config subcommand
     config_parser = subparsers.add_parser('config', help='Manage configuration settings')

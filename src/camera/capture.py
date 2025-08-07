@@ -79,10 +79,10 @@ def main():
     if args.command == 'run':
         logger.info("Capturing once.")
         capture_all(all_urls, config)
-    elif args.command == 'run_repeat':
+    elif args.command == 'run-repeat':
         logger.info("Capturing in one day repeat mode. Press Ctrl+C to stop.")
         capture_all_repeat(all_urls, config, CAPTURE_TODAY)
-    elif args.command == 'run_repeat_no_limit':
+    elif args.command == 'run-repeat-no-limit':
         logger.info("Capturing in continuous repeat mode. Press Ctrl+C to stop.")
         capture_all_repeat(all_urls, config, NONSTOP_CAPTURE)
     else:
