@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 def capture_all(all_urls: pd.DataFrame, config: CameraConfig) -> None:
     """Capture images from all cameras in the camera locations file."""
     images_root = config.image_save_path
-    for index, row in all_urls.iterrows():
+    for _, row in all_urls.iterrows():
         url = row['url']
         location = row['location']
         logger.info(f"Capturing image for {location} at {url}")
@@ -34,14 +34,14 @@ def capture_all(all_urls: pd.DataFrame, config: CameraConfig) -> None:
 
 
 def capture_all_repeat(all_urls: pd.DataFrame, config: CameraConfig, capture_mode: int = CAPTURE_TODAY) -> bool:
-    now = datetime.now()
+    target = datetime.now()
     wait_period_length = 600    # 10 minutes, to allow for periodic updates
-    day_end = now.replace(hour=config.end.hour, minute=config.end.minute, second=0, microsecond=0)
+    day_end = target.replace(hour=config.end.hour, minute=config.end.minute, second=0, microsecond=0)
     success = False
     try:
         while True:
             capture_all(all_urls, config)
-            sleep_time, capture_time = determine_delay_to_next_capture_time(config, now)
+            sleep_time, capture_time = determine_delay_to_next_capture_time(config, target)
             if (capture_mode == CAPTURE_TODAY) and capture_time > day_end:
                 logger.info("Capture finished for today.")
                 success = True
@@ -49,7 +49,7 @@ def capture_all_repeat(all_urls: pd.DataFrame, config: CameraConfig, capture_mod
             logger.info(f'Next capture at {capture_time}; Press Ctrl+C to stop.')
             wait_until_next_capture(sleep_time, wait_period_length,
                                     print_func=print if config.verbose else (lambda *a, **k: None))
-            now = datetime.now()
+            target = datetime.now()
     except KeyboardInterrupt:
         logger.info("Stopping repeat capture.")
     except EndCaptureException:
