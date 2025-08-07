@@ -1,11 +1,8 @@
 from datetime import datetime
 import logging
 from pathlib import Path
-import requests
 import sys
 import pandas as pd
-from time import sleep, time
-from bs4 import BeautifulSoup
 from camera.config import CameraConfig
 from camera.camera_locations import load_urls_from_file
 from camera.kenya_capture import capture
@@ -19,31 +16,6 @@ NONSTOP_CAPTURE = 2
 
 
 logger = logging.getLogger(__name__)
-
-
-def capture(page_url: str) -> tuple[bytes, str] | tuple[None, None]:
-    response = requests.get(page_url)
-    if response.status_code != 200:
-        logger.error(f'Unable to access "{page_url}"')
-        return (None, None)
-
-    # make sure to use the correct encoding
-    response.encoding = response.apparent_encoding
-    soup = BeautifulSoup(response.text, 'html.parser')
-
-    collect = {}
-    station_name = find_camera_title(soup)
-    logger.info(f"Camera Name:, {station_name}")
-    collect['name'] = station_name
-    collect['url'] = page_url
-
-    lat_lon = get_camera_coordinates(soup)
-
-    img_url = get_latest_image_url(soup)
-
-    img_data = retrieve_image(img_url)
-
-    return img_data, img_url
 
 
 def capture_all(all_urls: pd.DataFrame, config: CameraConfig) -> None:
