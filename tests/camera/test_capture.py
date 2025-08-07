@@ -1,11 +1,9 @@
-from datetime import datetime, timedelta, time as time_class
+from datetime import datetime, time as time_class
 import pandas as pd
-import time
 import pytest
 from unittest.mock import patch
 
-from testfixtures import Replace, mock_time
-from camera.capture import determine_delay_to_next_capture_time, wait_until_next_capture
+from camera.timing_functions import determine_delay_to_next_capture_time
 from camera.capture import capture_all_repeat, NONSTOP_CAPTURE, CAPTURE_TODAY
 from camera.config import CameraConfig
 
@@ -61,8 +59,8 @@ def test_capture_repeat_one_day(interval: int):
     current_time = datetime(*time_tuple)
     from testfixtures import Replace, mock_datetime, mock_time
 
-    with Replace("camera.capture.datetime", mock_datetime(current_time, delta=interval, delta_type='minutes')):
-        with patch("camera.capture.sleep") as mock_sleep:
-            with Replace("camera.capture.time", mock_time(*time_tuple, delta=interval, delta_type='minutes')):
+    with Replace("camera.timing_functions.datetime", mock_datetime(current_time, delta=interval, delta_type='minutes')):
+        with patch("camera.timing_functions.sleep") as mock_sleep:
+            with Replace("camera.timing_functions.time", mock_time(*time_tuple, delta=interval, delta_type='minutes')):
                 succeeded = capture_all_repeat(pd.DataFrame(), config, capture_mode=CAPTURE_TODAY)
                 assert succeeded, "Capture should succeed without errors"
