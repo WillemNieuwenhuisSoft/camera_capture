@@ -1,7 +1,6 @@
-from camera.capture import format_seconds_to_hours_minutes
-from time import sleep, time, gmtime
+from time import time, gmtime
 import pytest
-from camera.capture import determine_delay_to_next_capture_time, wait_until_next_capture
+from camera.timing_functions import format_seconds_to_hours_minutes, wait_until_next_capture
 
 
 @pytest.mark.skip(reason="Manual timing test; run manually only.")
