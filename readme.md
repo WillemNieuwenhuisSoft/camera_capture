@@ -18,41 +18,13 @@ pip install camera-capture
 > [!CAUTION]
 >
 > When installing on Windows, preferable make sure Python is installed from https://python.org.
-> When Python is installed from the Microsoft Store, `pip install camera-capture` will install, but not fully adjust the `Path` environment variable. The installation issues a warning (the exact path is likely not the same, but it should look similar):
 >
-> WARNING: The script normalizer.exe is installed in `<userprofile\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\Scripts` which is not on `PATH`. Consider adding this directory to `PATH` or, if you prefer to suppress this warning, use --no-warn-script-location.
-> WARNING: The script capture.exe is installed in `<userprofile>\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\Scripts` which is not on `PATH`.
-> Consider adding this directory to `PATH` or, if you prefer to suppress this warning, use --no-warn-script-location.
->
-> To make full use of the `camera-capture` feature consider following this advice.
+> If however, Python is installed from the Microsoft Store, `pip install camera-capture` will properly install, but not fully adjust the `Path` environment variable.
+> The installation issues a warning. Consider adding the mentioned directory to `PATH`.
 
 ---
 
-## How the App Works
-
-1. **Configuration**  
-   The app uses a configuration file (`camera.config`) in your user profile directory to store settings such as the root folder for saving images, capture interval, and start/end times.
-
-2. **Camera Locations**  
-   Camera URLs and location names are loaded from a user provided CSV file (default = `camera_locations.txt`). Each row should have a `url` and a `location` column. The user is free to add/remove locations at will.
-
-3. **Image Capture**  
-   For each camera, the app downloads the latest image and saves it in a folder structure:  
-   `root_folder/location/YYYY/MM/DD/`
-   The root_folder is read from the configuration file when starting the app.
-
-4. **Scheduling**  
-   The app can run once, repeat for the current day, or repeat indefinitely, based on your command line options. For all locations the scheduled start and end time per day are equal.
-
-   The capture moments are equally spaced after the `start` time and will stop
-   on or before the `end` time, never after.
-
-5. **CLI Configuration**  
-   You can list and update configuration settings using the CLI.
-
----
-
-## Command Line Options
+## How to use the app
 
 The app provides several commands and subcommands:
 
@@ -71,27 +43,17 @@ The app provides several commands and subcommands:
   python -m camera run
   ```
 
-- **run_repeat**  
+- **run-repeat**  
   Repeat capturing images at the configured interval for the current day.
 
   ```
-  capture run_repeat
+  capture run-repeat
   ```
 
-  Or
-
-  ```
-  python -m camera run_repeat
-  ```
-
-- **run_repeat_no_limit**  
+- **run-repeat-no-limit**  
   Repeat capturing images at the configured interval indefinitely.
   ```
-  capture run_repeat_no_limit
-  ```
-  Or
-  ```
-  python -m camera run_repeat_no_limit
+  capture run-repeat-no-limit
   ```
 
 ### Config Subcommands
@@ -147,11 +109,34 @@ Currently these keys are supported:
 - start: local time to start the capture (HH:MM)
 - end: local time to end the capture (HH:MM)
 - interval: time in minutes between captures.
-- locations_file: name of the file containing the names of camera locations and their URLs. The file
-  is expected in the current folder.
+- locations_file: name of the file containing the names of camera locations and their URLs. The file is expected in the current folder.
 - verbose: enable verbose output for debugging and information
 
 You can use the CLI to update these values, or manually edit the file.
+
+---
+
+## How the App Works
+
+1. **Configuration**  
+   The app uses a configuration file (`camera.config`) in your user profile directory to store settings such as the root folder for saving images, capture interval, and start/end times.
+
+2. **Camera Locations**  
+   Camera URLs and location names are loaded from a user provided CSV file (default = `camera_locations.txt`). Each row should have a `url` and a `location` column. The user is free to add/remove locations at will.
+
+3. **Image Capture**  
+   For each camera, the app downloads the latest image and saves it in a folder structure:  
+   `root_folder/location/YYYY/MM/DD/`
+   The root_folder is read from the configuration file when starting the app.
+
+4. **Scheduling**  
+   The app can run once, repeat for the current day, or repeat indefinitely, based on your command line options. For all locations the scheduled start and end time per day are equal.
+
+   The capture moments are equally spaced after the `start` time and will stop
+   on or before the `end` time, never after.
+
+5. **CLI Configuration**  
+   You can list and update configuration settings using the CLI.
 
 ---
 
