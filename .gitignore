@@ -1,3 +1,4 @@
 dist
 **\__pycache__
 camera_capture.log
+.coverage
