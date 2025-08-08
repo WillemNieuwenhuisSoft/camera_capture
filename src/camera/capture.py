@@ -61,13 +61,13 @@ def capture_all_repeat(all_urls: pd.DataFrame, config: CameraConfig, capture_mod
 def main():
     parser = cli_parser()
     args = parser.parse_args()
-    if not args.command:
+    if not args.Command:
         parser.print_help()
         sys.exit(1)
 
     config = CameraConfig()  # Load the configuration
 
-    if str(args.command).startswith('run'):
+    if str(args.Command).startswith('run'):
         all_urls = load_urls_from_file(config)
         if all_urls.empty:
             logger.error("No camera URLs found. Please check the camera locations file.")
@@ -76,13 +76,13 @@ def main():
     if args.verbose:
         config.verbose = True
 
-    if args.command == 'run':
+    if args.Command == 'run':
         logger.info("Capturing once.")
         capture_all(all_urls, config)
-    elif args.command == 'run-repeat':
+    elif args.Command == 'run-repeat':
         logger.info("Capturing in one day repeat mode. Press Ctrl+C to stop.")
         capture_all_repeat(all_urls, config, CAPTURE_TODAY)
-    elif args.command == 'run-repeat-no-limit':
+    elif args.Command == 'run-repeat-no-limit':
         logger.info("Capturing in continuous repeat mode. Press Ctrl+C to stop.")
         capture_all_repeat(all_urls, config, NONSTOP_CAPTURE)
     else:
