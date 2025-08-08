@@ -53,7 +53,7 @@ def cli_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         '-v', '--verbose', action='store_true', help='Enable verbose output'
     )
-    subparsers = parser.add_subparsers(dest='command', required=False)
+    subparsers = parser.add_subparsers(dest='Command', required=False)
 
     # Run subcommands
     runonce_parser = subparsers.add_parser('run', help='Capture images from cameras')
@@ -64,7 +64,7 @@ def cli_parser() -> argparse.ArgumentParser:
 
     # Config subcommand
     config_parser = subparsers.add_parser('config', help='Manage configuration settings')
-    config_subparsers = config_parser.add_subparsers(dest='config_action', required=True)
+    config_subparsers = config_parser.add_subparsers(dest='Configuration', required=True)
 
     # config list
     list_parser = config_subparsers.add_parser('list', help='List current configuration settings')
