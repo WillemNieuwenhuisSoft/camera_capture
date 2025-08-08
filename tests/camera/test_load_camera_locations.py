@@ -1,6 +1,8 @@
 import pytest
 import pandas as pd
-from camera.camera_locations import load_camera_locations
+from pathlib import Path
+from camera.camera_locations import load_urls_from_file, load_camera_locations
+from camera.config import CameraConfig
 
 
 @pytest.fixture
@@ -27,6 +29,7 @@ def malformed_csv(tmp_path):
     return str(file)
 
 
+# Test: load_camera_locations function
 def test_load_camera_locations_valid(valid_csv):
     """ test loading a valid CSV file with camera locations"""
     df = load_camera_locations(valid_csv)
@@ -54,4 +57,44 @@ def test_load_camera_locations_malformed_csv(malformed_csv):
     """ test that incomplete records are removed"""
     df = load_camera_locations(malformed_csv)
     assert isinstance(df, pd.DataFrame)
+    assert df.empty
+
+
+# test: load_urls_from_file function
+def test_load_urls_from_file_valid(valid_csv):
+    config = CameraConfig()
+    config.location_file = Path(valid_csv)
+
+    df = load_urls_from_file(config)
+    assert not df.empty
+    assert list(df.columns) == ["url", "location"]
+    assert len(df) == 2
+    assert df.iloc[0]["url"] == "http://cam1"
+    assert df.iloc[0]["location"] == "Entrance"
+
+
+def test_load_urls_from_file_missing_file(tmp_path):
+    # File does not exist
+    config = CameraConfig()
+    config.location_file = tmp_path / "nonexistent.csv"
+    df = load_urls_from_file(config)
+    assert df.empty
+
+
+def test_load_urls_from_file_empty_file(tmp_path):
+    file_path = tmp_path / "camera_locations.txt"
+    file_path.write_text("")
+    config = CameraConfig()
+    config.location_file = file_path
+    df = load_urls_from_file(config)
+    assert df.empty
+
+
+def test_load_urls_from_file_invalid_columns(tmp_path):
+    csv_content = "foo,bar\n1,2\n"
+    file_path = tmp_path / "camera_locations.txt"
+    file_path.write_text(csv_content)
+    config = CameraConfig()
+    config.location_file = file_path
+    df = load_urls_from_file(config)
     assert df.empty
