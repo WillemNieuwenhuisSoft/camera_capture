@@ -15,7 +15,7 @@ class CameraConfig:
     start: time = time(hour=6, minute=30)
     end: time = time(hour=18, minute=30)
     interval: int = 30  # in minutes
-    location_file: Path = field(default_factory=lambda: Path.home() / 'camera_locations.txt')
+    location_file: str = field(default_factory=lambda: 'camera_locations.txt')
     verbose: bool = False  # Whether to print verbose output
 
     # Add a mapping for user-friendly descriptions
@@ -32,12 +32,12 @@ class CameraConfig:
         self.load()
 
     def _create_default_config(self):
-        '''Create a default configuration file; assumes itdoes not exist.'''
+        '''Create a default configuration file; assumes it does not exist.'''
         save_folder = Path.home() / 'camera_images'
-        location_file = Path.home() / 'camera_locations.txt'
+        location_file = 'camera_locations.txt'
         default_config = {
             'image_save_path': str(save_folder),
-            'locations_file': str(location_file)
+            'locations_file': location_file
         }
         with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
             json.dump(default_config, f, indent=4)
@@ -52,7 +52,7 @@ class CameraConfig:
             config_data = json.load(f)
             try:
                 self.image_save_path = Path(config_data.get('image_save_path'))
-                self.location_file = Path(config_data.get('locations_file'))
+                self.location_file = Path(config_data.get('locations_file')).name
                 self.start = time.fromisoformat(config_data.get('start', '06:30'))
                 self.end = time.fromisoformat(config_data.get('end', '18:30'))
                 self.interval = config_data.get('interval', 30)
@@ -66,7 +66,7 @@ class CameraConfig:
             'start': self.start.strftime('%H:%M'),
             'end': self.end.strftime('%H:%M'),
             'interval': self.interval,
-            'locations_file': str(self.location_file),
+            'locations_file': self.location_file,
             'verbose': self.verbose
         }
         with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
