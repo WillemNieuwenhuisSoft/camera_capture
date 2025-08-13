@@ -15,7 +15,7 @@ class CameraConfig:
     start: time = time(hour=6, minute=30)
     end: time = time(hour=18, minute=30)
     interval: int = 30  # in minutes
-    location_file: str = field(default_factory=lambda: 'camera_locations.txt')
+    locations_file: str = field(default_factory=lambda: 'camera_locations.txt')
     verbose: bool = False  # Whether to print verbose output
 
     # Add a mapping for user-friendly descriptions
@@ -37,7 +37,11 @@ class CameraConfig:
         location_file = 'camera_locations.txt'
         default_config = {
             'image_save_path': str(save_folder),
-            'locations_file': location_file
+            'locations_file': location_file,
+            'start': self.start.strftime('%H:%M'),
+            'end': self.end.strftime('%H:%M'),
+            'interval': self.interval,
+            'verbose': self.verbose
         }
         with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
             json.dump(default_config, f, indent=4)
