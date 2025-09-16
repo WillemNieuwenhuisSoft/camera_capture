@@ -8,7 +8,7 @@ from camera.camera_locations import load_urls_from_file
 from camera.kenya_capture import capture
 from camera.capture_functions import save_camera_image
 from camera.timing_functions import determine_delay_to_next_capture_time, wait_until_next_capture
-from camera.timing_functions import EndCaptureException
+from camera.timing_functions import wait_until_first_capture_time, EndCaptureException
 from camera.cli_parser import cli_parser
 
 CAPTURE_TODAY = 1
@@ -72,6 +72,7 @@ def main():
         if all_urls.empty:
             logger.error("No camera URLs found. Please check the camera locations file.")
             sys.exit(1)
+        wait_until_first_capture_time(config)
 
     if args.verbose:
         config.verbose = True

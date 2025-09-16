@@ -8,6 +8,14 @@ class EndCaptureException(Exception):
     pass
 
 
+def wait_until_first_capture_time(config: CameraConfig) -> None:
+    '''This function is called at the start only to avoid initiating the capture process too early.'''
+    now = datetime.now()
+    if now.time() < config.start:
+        sleep_time, _ = determine_delay_to_next_capture_time(config, now)
+        wait_until_next_capture(sleep_time, 600)
+
+
 def determine_delay_to_next_capture_time(config: CameraConfig, now: datetime) -> tuple[int, datetime]:
     """ Determine the initial start time based on the current time and the configured start time.
         Capture time is calculated at regular intervals since the start time.
@@ -51,7 +59,7 @@ def format_seconds_to_hours_minutes(seconds_to_wait: int) -> str:
     return ', '.join(parts)
 
 
-def wait_until_next_capture(seconds: int, period_length: int = 3600, print_func=print) -> None:
+def wait_until_next_capture(seconds: int, period_length: int = 600, print_func=print) -> None:
     """
         Wait until the next capture time, allowing for keyboard interrupts.
         Once per {period_length} report remaining time.
