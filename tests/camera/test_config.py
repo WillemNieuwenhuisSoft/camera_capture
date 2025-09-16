@@ -67,7 +67,7 @@ def test_load_config_missing_fields(patch_home_and_config):
     cfg = CameraConfig()
     assert cfg.image_save_path == Path("/tmp/images")
     # Defaults for missing fields
-    assert cfg.location_file == "camera_locations.txt"
+    assert cfg.locations_file == "camera_locations.txt"
     assert cfg.start == time(6, 30)
     assert cfg.end == time(18, 30)
     assert cfg.interval == 30
